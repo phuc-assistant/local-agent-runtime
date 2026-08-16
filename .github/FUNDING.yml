@@ -1,0 +1,7 @@
+# Polar is the intended checkout. GitHub Sponsors is intentionally not
+# enabled on phuc-assistant (machine-account candidate, not the payee).
+# Replace the placeholder after Phuc completes Polar + Stripe Express KYC.
+#
+# custom: ["https://polar.sh/REPLACE-WHEN-CHECKOUT-LIVE"]
+custom:
+  - "https://polar.sh"
