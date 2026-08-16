@@ -1,0 +1,42 @@
+{
+  "name": "local-agent-runtime",
+  "version": "0.1.0",
+  "description": "Open-core local agent runtime: CLI, sandboxed worker, OpenAI-compatible providers.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "lar": "./bin/lar.js",
+    "local-agent-runtime": "./bin/lar.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "schema",
+    "docs",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "author": "Phuc Pham Minh",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "lar": "node bin/lar.js"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phuc-assistant/local-agent-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phuc-assistant/local-agent-runtime/issues"
+  },
+  "homepage": "https://github.com/phuc-assistant/local-agent-runtime#readme",
+  "keywords": [
+    "agents",
+    "local-first",
+    "sandbox",
+    "openai-compatible"
+  ]
+}
