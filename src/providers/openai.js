@@ -10,7 +10,8 @@ export function createOpenAIProvider(opts) {
       if (!apiKey) {
         throw new Error("missing API key: set LAR_API_KEY or OPENAI_API_KEY in the environment; keys are never stored in the repo");
       }
-      const url = baseUrl.replace(/\/$/, "") + "/chat/completions";
+      const root = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+      const url = root + "/chat/completions";
       const res = await fetch(url, {
         method: "POST",
         headers: {
