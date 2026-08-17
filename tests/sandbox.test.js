@@ -4,7 +4,8 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { assertInside, defaultConfig } from "../src/paths.js";
-import { writeFileSandboxed, listFilesSandboxed } from "../src/sandbox/index.js";
+import { writeFileSandboxed, listFilesSandboxed, selectSandbox } from "../src/sandbox/index.js";
+import { dockerAvailable, runDocker } from "../src/sandbox/docker.js";
 
 test("assertInside rejects absolute paths", () => {
   const ws = os.tmpdir();
@@ -31,4 +32,25 @@ test("defaultConfig uses stub and network off", () => {
   assert.equal(c.provider, "stub");
   assert.equal(c.network, false);
   assert.equal(c.sandbox, "auto");
+});
+
+test("selectSandbox auto uses subprocess when docker is missing", async () => {
+  const mode = await selectSandbox("auto");
+  if (await dockerAvailable()) {
+    assert.equal(mode, "docker");
+  } else {
+    assert.equal(mode, "subprocess");
+  }
+});
+
+test("docker sandbox echo when docker is installed", async (t) => {
+  if (!(await dockerAvailable())) {
+    t.skip("docker not installed; subprocess is the documented fallback, not a VM");
+    return;
+  }
+  const ws = fs.mkdtempSync(path.join(os.tmpdir(), "lar-dock-"));
+  fs.writeFileSync(path.join(ws, "marker.txt"), "ok\n");
+  const out = await runDocker({ cwd: ws, command: "cat", args: ["marker.txt"], network: false, timeoutMs: 20000 });
+  assert.equal(out.exitCode, 0, out.stderr);
+  assert.match(out.stdout, /ok/);
 });

@@ -8,8 +8,8 @@ Open-core local agent runtime: CLI, sandboxed worker, OpenAI-compatible provider
 
 Sample hello-world (stub provider, no API key):
 
-    running in /tmp/lar-hello-world
-    run:      81ba61ff-2907-4af2-9314-ecca153727ff
+    running in /tmp/lar-demo
+    run:      16a488d0-f43d-4c70-8c6b-b5e9187b2509
     status:   completed
     provider: stub
     sandbox:  subprocess
@@ -44,6 +44,8 @@ No registry install. No API key. Zero runtime dependencies.
     cat ./demo/hello.txt
 
 Expected: `hello.txt` contains `Hello, world`, status `completed`, provider `stub`. The stub writes that file when the prompt looks like hello-world; other prompts echo offline.
+
+Tests include a local mock OpenAI-compatible HTTP server (no API keys, no paid APIs). Docker is optional; when it is missing, `auto` uses subprocess. That is cwd confinement, not a VM.
 
 Later: set `provider` to `openai-compatible` in `.lar/config.json` and export `LAR_API_KEY` (or `OPENAI_API_KEY`). Keys stay in the environment. Never commit them.
 
