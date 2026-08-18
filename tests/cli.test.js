@@ -54,3 +54,26 @@ test("stub echo does not write hello.txt", async () => {
   assert.match(run.final, /stub-echo/);
   assert.equal(fs.existsSync(path.join(ws, "hello.txt")), false);
 });
+
+test("stub fix-the-broken-sum reads then writes a correct sum", async () => {
+  const ws = fs.mkdtempSync(path.join(os.tmpdir(), "lar-sum-"));
+  initWorkspace(ws);
+  const destDir = path.join(ws, "fixtures");
+  fs.mkdirSync(destDir, { recursive: true });
+  const src = fileURLToPath(new URL("../fixtures/broken-sum.js", import.meta.url));
+  fs.copyFileSync(src, path.join(destDir, "broken-sum.js"));
+  const { pathToFileURL } = await import("node:url");
+  const before = await import(pathToFileURL(path.join(destDir, "broken-sum.js")).href + "?before");
+  assert.equal(before.sum(2, 3), -1);
+  const run = await runPrompt(ws, "fix the broken sum", { sandbox: "subprocess" });
+  assert.equal(run.status, "completed");
+  assert.deepEqual(run.steps.map((s) => s.tool), ["read_file", "write_file"]);
+  assert.equal(run.steps[0].ok, true);
+  assert.equal(run.steps[1].ok, true);
+  const after = await import(pathToFileURL(path.join(destDir, "broken-sum.js")).href + "?after=" + Date.now());
+  assert.equal(after.sum(2, 3), 5);
+  assert.equal(after.sum(10, 4), 14);
+  assert.equal(after.sumAll([1, 2, 3]), 6);
+  assert.match(run.final, /Fixed broken-sum\.js/i);
+  assert.equal(fs.existsSync(path.join(ws, "hello.txt")), false);
+});

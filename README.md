@@ -2,9 +2,16 @@
 
 Built and maintained with an autonomous AI agent (Tester) under the direction of Phuc Pham Minh. The legal seller and payout identity is Phuc, not the agent.
 
-Do not send money to the bot. Polar checkout is not live. Pro is planned at **$19 one-time** and **$9/month**; see [docs/polar.md](docs/polar.md). KYC, bank payout, and tax are human-only.
+Do not send money to the bot. Polar checkout is **not live**. There is nothing to buy today.
 
-Open-core local agent runtime: CLI, sandboxed worker, OpenAI-compatible providers. Default provider is an **offline stub/echo**. `lar init` plus `lar run` work with **no API keys**. Independent project; it does not impersonate xAI, Grok, or Cursor.
+## What v0.1 actually is
+
+v0.1 is an OSS CLI + sandbox loop + stub and openai-compatible providers. Independent project; it does not impersonate xAI, Grok, or Cursor.
+
+- **Stub provider:** an offline mock, **not a model**. It matches a few demo prompts (hello-world; fix the broken sum) and otherwise echoes. No API key. No weights. No inference.
+- **openai-compatible adapter:** POSTs to `{baseUrl}/chat/completions` when you set a key. Not bundled with a hosted model.
+- **Sandbox:** still **not a VM**. Default `subprocess` is cwd confinement. Optional Docker is a container, not Firecracker, gVisor, or a dedicated VM.
+- **Pro extras are not built yet.** Avatar pack, private extras repo, and Convex control plane do not exist in this repo or as a download. Polar checkout is not live. Planned prices ($19 one-time / $9/month) are copy only; customers cannot buy those today. See [docs/polar.md](docs/polar.md). KYC, bank payout, and tax are human-only.
 
 Sample hello-world (stub provider, no API key):
 
@@ -19,6 +26,8 @@ Sample hello-world (stub provider, no API key):
     {"path":"hello.txt","bytes":13}
 
     Hello, world
+
+Second stub path (still a mock, not a model): copy `fixtures/broken-sum.js` into the workspace, then `lar run "fix the broken sum"`. The loop **read_file** then **write_file**s a correct `sum`. Hello-world still works.
 
 ## Honest sandbox language
 
@@ -43,7 +52,15 @@ No registry install. No API key. Zero runtime dependencies.
     node bin/lar.js status --workspace ./demo
     cat ./demo/hello.txt
 
-Expected: `hello.txt` contains `Hello, world`, status `completed`, provider `stub`. The stub writes that file when the prompt looks like hello-world; other prompts echo offline.
+Expected: `hello.txt` contains `Hello, world`, status `completed`, provider `stub`. The stub writes that file when the prompt looks like hello-world; other prompts echo offline unless they match the broken-sum demo.
+
+Second path (optional):
+
+    mkdir -p ./demo/fixtures
+    cp fixtures/broken-sum.js ./demo/fixtures/broken-sum.js
+    node bin/lar.js run --workspace ./demo --sandbox subprocess "fix the broken sum"
+
+Expected: tools `read_file, write_file`; `fixtures/broken-sum.js` then exports `sum(2, 3) === 5`. The stub is still an offline mock.
 
 Tests include a local mock OpenAI-compatible HTTP server (no API keys, no paid APIs). Docker is optional; when it is missing, `auto` uses subprocess. That is cwd confinement, not a VM.
 
@@ -69,15 +86,15 @@ Flags: `--workspace <dir>`, `--sandbox auto|docker|subprocess`, `--version`.
       -> store (JSONL default, SQL dump, sqlite3 CLI if installed)
 
 - `bin/lar.js` to `src/cli.js`
-- Stub provider is an offline echo/mock so hello-world works without keys
+- Stub provider is an offline mock so hello-world and the broken-sum fixture work without keys. It is not a model.
 - OpenAI-compatible adapter POSTs to `{baseUrl}/chat/completions`. Keys from `LAR_API_KEY` or `OPENAI_API_KEY` only
 - Run log: `.lar/runs.jsonl`. Optional SQL from `schema/local.sql`. Not Prisma Cloud. Not Supabase.
 
-## Free vs Pro
+## Free vs planned Pro
 
-Apache-2.0 in this repo: CLI, sandbox runner, provider-agnostic loop, local run-log schema, docs.
+Apache-2.0 in this repo: CLI, sandbox runner, provider-agnostic loop, local run-log schema, demo fixtures, docs.
 
-Pro (Polar, checkout not live): license key, commercial grant, avatar pack, private extras repo, future Convex control plane. Prices: $19 one-time or $9/month. Details: [docs/polar.md](docs/polar.md).
+Planned Pro (Polar, **checkout not live**, **extras not built**): license key, commercial grant, avatar pack, private extras repo, future Convex control plane. Those files and benefits do not exist yet. Prices on [docs/polar.md](docs/polar.md) are draft copy, not an offer.
 
 ## Funding
 
