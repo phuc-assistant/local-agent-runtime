@@ -1,7 +1,7 @@
 {
   "name": "local-agent-runtime",
-  "version": "0.1.1",
-  "description": "Open-core local agent runtime: CLI, sandboxed worker, OpenAI-compatible providers.",
+  "version": "0.1.2",
+  "description": "OSS CLI + sandbox loop + stub (offline mock, not a model) and openai-compatible providers. v0.1 is not a VM; Pro extras are not for sale yet.",
   "license": "Apache-2.0",
   "type": "module",
   "bin": {
@@ -13,6 +13,7 @@
     "src",
     "schema",
     "docs",
+    "fixtures",
     "LICENSE",
     "NOTICE",
     "README.md"
